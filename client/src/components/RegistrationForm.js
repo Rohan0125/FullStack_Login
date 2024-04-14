@@ -10,7 +10,9 @@ const RegistrationForm = () => {
     email: "",
     password: "",
   });
-  const history = useNavigate();
+  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,13 +22,20 @@ const RegistrationForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/register", formData);
-      console.log(response.data);
+      console.log(response.data.success);
+      if (response.data.success) {
+        setMessage("Registration successful!");
+        // Save user information to local storage
+        localStorage.setItem("userToken", JSON.stringify(response.data.token));
 
-      // Save user information to local storage
-      localStorage.setItem("currentUser", JSON.stringify(response.data.user));
-
-      // Redirect to the user page or dashboard
-      history.push("/user");
+        // Redirect to the user page or dashboard
+        navigate("/login");
+      } else {
+        console.log(response.data.message);
+        setMessage(
+          response.data.message + ", Try different username or emailID"
+        );
+      }
     } catch (error) {
       console.error(error);
       // Handle error, show an alert, etc.
@@ -89,6 +98,7 @@ const RegistrationForm = () => {
                   Already have an account? Login
                 </Link>
               </Form>
+              <p style={{ color: "red" }}>{message}</p>
             </Card.Body>
           </Card>
         </Col>

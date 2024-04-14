@@ -6,17 +6,18 @@ const authRoutes = require("./routes/Auth");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+require("dotenv").config();
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
-// Connect to MongoDB
+const usernameDB = process.env.dbuname;
+const passwordDB = process.env.dbpass;
+const URI = `mongodb+srv://${usernameDB}:${passwordDB}@cluster0.ft4ihpm.mongodb.net/`;
+
 mongoose
-  .connect("mongodb://localhost:27017/your-database-name", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 

@@ -10,12 +10,15 @@ import {
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const history = useNavigate();
+  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,12 +29,16 @@ const LoginForm = () => {
     try {
       const response = await axios.post("/api/login", formData);
       console.log(response.data);
-
-      // Save JWT token to local storage
-      localStorage.setItem("accessToken", response.data.accessToken);
-
-      // Redirect to the user page or dashboard
-      history.push("/user");
+      if (response.data.success) {
+        // Save JWT token to local storage
+        localStorage.setItem("accessToken", response.data.token);
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+        // Redirect to the user page or dashboard
+        navigate("/UserPage");
+      } else {
+        console.log(response.data.message);
+        setMessage(response.data.message);
+      }
     } catch (error) {
       console.error(error);
       // Handle error, show an alert, etc.
@@ -83,6 +90,7 @@ const LoginForm = () => {
                   </Link>
                 </div>
               </Form>
+              <p style={{ color: "red" }}>{message}</p>
             </Card.Body>
           </Card>
         </Col>
