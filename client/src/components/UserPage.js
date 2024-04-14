@@ -1,12 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Container, Table, Button } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Container, Table, Button, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jsonwebtoken";
-
 const UserPage = () => {
-  const [userInfo, setUserInfo] = useState(null);
   const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
+
+  const handleLogout = () => {
+    // Clear token from local storage
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userInfo");
+    navigate("/login");
+  };
+  const userInfo = {
+    name: "rohan",
+    email: "r@r.com",
+  };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -27,12 +37,13 @@ const UserPage = () => {
           return;
         }
 
-        const response = await axios.get("/api/user-info", {
+        // Fetch user information from the backend API
+        const response = await axios.get("/api/userInfo", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
         });
-        setUserInfo(response.data);
+        // setUserInfo(response.data);
       } catch (error) {
         console.error("Error fetching user info:", error);
         // Handle error, show an alert, etc.
@@ -42,41 +53,45 @@ const UserPage = () => {
     fetchUserInfo();
   }, [navigate]);
 
-  const handleLogout = () => {
-    // Clear token from local storage
-    localStorage.removeItem("accessToken");
-    // Redirect to login page
-    navigate("/login");
-  };
-
   return (
-    <Container>
-      <h2>User Information</h2>
-      {userInfo ? (
-        <>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                {/* Add more fields as needed */}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{userInfo.name}</td>
-                <td>{userInfo.email}</td>
-                {/* Display more fields as needed */}
-              </tr>
-            </tbody>
-          </Table>
-          <Button variant="danger" onClick={handleLogout}>
-            Logout
-          </Button>
-        </>
-      ) : (
-        <p>Loading user information...</p>
-      )}
+    <Container
+      style={{
+        textAlign: "center",
+      }}
+    >
+      <h2>User playlist</h2>
+      <>
+        <Row className="m-5">
+          <Col>
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/QqPebsdEQnY?si=EVY6Kh4OKMfUPeqW"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </Col>
+          <Col>
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/4fQeaM62mOY?si=Kn_czHHJa2V3fzAD"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </Col>
+        </Row>
+
+        <Button variant="danger" onClick={handleLogout}>
+          Logout
+        </Button>
+      </>
     </Container>
   );
 };

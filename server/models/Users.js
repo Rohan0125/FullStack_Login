@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   created_at: { type: Date, default: Date.now },
-  tokens: [{ type: String }],
 });
 
 // Hash password before saving user

@@ -34,7 +34,7 @@ const LoginForm = () => {
         localStorage.setItem("accessToken", response.data.token);
         localStorage.setItem("userInfo", JSON.stringify(response.data.user));
         // Redirect to the user page or dashboard
-        navigate("/UserPage");
+        navigate("/user");
       } else {
         console.log(response.data.message);
         setMessage(response.data.message);

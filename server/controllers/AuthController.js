@@ -53,7 +53,7 @@ const login = async (req, res) => {
             token: user.tokens,
           },
           process.env.JWT_SECRET, // Use your own secret key here
-          { expiresIn: "1h" }
+          { expiresIn: "5m" }
         );
         res.status(200).json({
           success: true,
@@ -76,4 +76,26 @@ const login = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-module.exports = { register, login };
+
+const userInfo = async (req, res) => {
+  const token = req.headers.authorization;
+  console.log("we are in");
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Verify the JWT token
+
+    // Retrieve user information from the database using the user ID
+    const user = await User.findOne({ email: decodedToken.email });
+    console.log(user);
+    if (!user) {
+      return res.status(204).json({ message: "User not found" });
+    }
+
+    // Respond with the user information
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
+module.exports = { register, login, userInfo };
