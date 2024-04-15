@@ -22,6 +22,9 @@ mongoose
   .catch((err) => console.log(err));
 
 // Routes
+app.get("/", (req, res) => {
+  res.send("hello there");
+});
 app.use("/api", authRoutes);
 
 app.listen(PORT, () => {
